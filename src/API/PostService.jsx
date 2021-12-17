@@ -1,5 +1,6 @@
 export default class PostService {
-  static async getAll() {
-    return await fetch('https://jsonplaceholder.typicode.com/posts').then(response => response.json());
+  // limit responsible for number of posts visible in one page
+  static async getAll(limit = 10, page = 1) {
+    return await fetch(`https://jsonplaceholder.typicode.com/posts?_limit=${limit}&_page=${page}`);
   }
 }
