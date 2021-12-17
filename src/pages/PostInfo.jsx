@@ -25,7 +25,7 @@ const PostInfo = () => {
   }, []);
 
   return (
-    <div>
+    <div className='App'>
       <h1>Вы открыли страницу поста c ID = {params.id}</h1>
       {isLoading
         ? <Loader/>
