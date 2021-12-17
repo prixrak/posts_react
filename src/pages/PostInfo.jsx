@@ -26,13 +26,13 @@ const PostInfo = () => {
 
   return (
     <div className='App'>
-      <h1>Вы открыли страницу поста c ID = {params.id}</h1>
+      <h1>Post with ID = {params.id}</h1>
       {isLoading
         ? <Loader/>
         :  <div>{post.id}. {post.title}</div>
       }
       <h1>
-          Комментарии
+          Comments
       </h1>
       {isComLoading
         ? <Loader/>
