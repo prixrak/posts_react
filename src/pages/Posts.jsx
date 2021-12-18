@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PostList from '../components/PostList';
 import PostForm from '../components/PostForm';
 import PostsFilter from '../components/PostsFilter';
@@ -10,6 +10,7 @@ import Loader from '../components/UI/Loader/Loader';
 import { useFetching } from '../hooks/useFetching';
 import { getPagesCount } from '../utils/pagesCount';
 import { usePagination } from '../hooks/usePagination';
+import { useObserver } from './../hooks/useObserver';
 
 function Posts() {
 
@@ -21,16 +22,18 @@ function Posts() {
   const [totalPages, setTotalPages] = useState(0); // total count of pages
   const [limit, setLimit] = useState(10); // max count of posts in one page
   const [page, setPage] = useState(1); // current page with posts 
-
+  const lastElement = useRef();
 
   // use of hooks
   const [fetchPosts, isPostLoading, postError] = useFetching(async () => {
     const response = await PostService.getAll(limit, page);
-    setPosts(await response.json());
+    setPosts([...posts, ...await response.json()]);
     
     const totalCount = response.headers.get('x-total-count');
     setTotalPages(getPagesCount(totalCount, limit));
   });
+
+  useObserver(lastElement, page < totalPages, isPostLoading, () => setPage(page + 1));
 
   // fetch posts when page number change
   useEffect(() => {
@@ -48,7 +51,6 @@ function Posts() {
   const removePost = (post) => setPosts(posts.filter((p) => p.id !== post.id));
   const changePageNumber = (p) => setPage(p);
 
- 
   return (
     <div className="App">
       <MyButton style={{marginTop: '30px'}} onClick={e => setModal(true)}>
@@ -65,11 +67,11 @@ function Posts() {
       {postError &&
         <h1>Error: {postError}</h1>
       }
-      {isPostLoading
-        ? <div style={{display: 'flex', justifyContent: 'center', marginTop: '50px'}}><Loader /></div> 
-        : <PostList remove={removePost} posts={sortedAndSearchedPosts} title='Posts1'/>
+      {isPostLoading &&
+        <div style={{display: 'flex', justifyContent: 'center', marginTop: '50px'}}><Loader /></div> 
       }
-      <div className='page__wrapper'>
+      <PostList remove={removePost} posts={sortedAndSearchedPosts} title='Posts1'/>
+      <div className='page__wrapper' ref={lastElement}>
       {pagesArray.map(p => 
         <span 
           className={page === p ? 'page page__current' : 'page'}
