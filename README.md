@@ -19,4 +19,4 @@
 ![Main](./imagesMD/MainPosts.png)
 
 ### **Modal window to add post**
-![Modal](./imagesMD/ModalCreatePosts.png)
+![Modal](./imagesMD/ModalCreatePost.png)
